@@ -7,6 +7,9 @@ app = FastAPI()
 database = Database.get_database()['Photos']
 fs = gridfs.GridFS(database)
 
+@app.get('/')
+def root():
+    return {'Hello': 'world'}
 @app.post("/post_photo/")
 async def post_photo(file: UploadFile = File(...)):
 
