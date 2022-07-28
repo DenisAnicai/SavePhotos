@@ -1,9 +1,21 @@
 from fastapi import FastAPI, File, UploadFile
-import gridfs
+from fastapi.middleware.cors import CORSMiddleware
 import Database
 import shutil
+import gridfs
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 database = Database.get_database()['Photos']
 fs = gridfs.GridFS(database)
 
