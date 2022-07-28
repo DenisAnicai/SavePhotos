@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import Database
 import shutil
 import gridfs
-import uvicorn
 
 app = FastAPI()
 
@@ -42,6 +41,3 @@ async def get_photo(photo_name: str):
         return {'Result': 'File downloaded successfully'}
     else:
         return {'Result': 'File not found'}
-
-if __name__ == "__main__":
-    uvicorn.run("api:app", port=5000, log_level="info")
