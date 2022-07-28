@@ -44,4 +44,4 @@ async def get_photo(photo_name: str):
         return {'Result': 'File not found'}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=5000, log_level="info")
+    uvicorn.run("api:app", port=5000, log_level="info")
