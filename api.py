@@ -1,8 +1,12 @@
-from fastapi import FastAPI, File, UploadFile
+import os
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import Database
-import shutil
-import gridfs
+
+os.environ['PATH'] = os.path.dirname(os.path.abspath(__file__)) + os.pathsep + os.environ['PATH']
+
+import processor
+
 
 app = FastAPI()
 
@@ -16,28 +20,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-database = Database.get_database()['Photos']
-fs = gridfs.GridFS(database)
 
 @app.get('/')
 def root():
-    return {'Hello': 'world'}
-@app.post("/post_photo/")
-async def post_photo(file: UploadFile = File(...)):
+    return processor.main()
 
-    contents = await file.read()
-    fs.put(contents, filename=file.filename)
-    return {'Result': 'File uploaded successfully'}
 
-@app.get("/get_photo/{photo_name}")
-async def get_photo(photo_name: str):
-    query = fs.find({'filename': f'{photo_name}'}).limit(1)
-    content = next(query, None)
-    if content:
-        id = content._id
-        file = fs.get(id)
-        with open(photo_name, 'wb') as savedPhoto:
-            shutil.copyfileobj(file, savedPhoto)
-        return {'Result': 'File downloaded successfully'}
-    else:
-        return {'Result': 'File not found'}
+if __name__ == '__main__':
+    import uvicorn
+
+    uvicorn.run(
+        'api:app',
+        host='127.0.0.1',
+        port=8000,
+        reload=True,
+        debug=True,
+        workers=1,
+    )
